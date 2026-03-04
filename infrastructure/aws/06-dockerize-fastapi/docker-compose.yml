@@ -1,0 +1,16 @@
+services:
+  app:
+    image: omixec/app
+
+    volumes:
+      - ./.aws:/root/.aws:ro
+
+  
+  nginx:
+    image: omixec/nginx
+
+    depends_on:
+      - app
+
+    ports:
+      - "80:80"
