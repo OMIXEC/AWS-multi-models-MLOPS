@@ -54,7 +54,9 @@ graph TD
 ## 📂 Project Structure
 
 ### 1. `docs/`
-Architecture guidelines, MLOps concepts, and research papers (e.g., Vision Transformer).
+Contains theoretical foundations and setup guidelines:
+*   **`architecture/`**: Research papers (e.g., Vision Transformer), deployment overviews, and MLOps concepts.
+*   **`setup/`**: Step-by-step guides for environment configuration (SSH, VS Code Remote, Crontab auto-starts, IAM roles, and Elastic IP configuration).
 
 ### 2. `infrastructure/`
 Cloud-specific automation scripts and infrastructure as code to deploy the stack:
@@ -68,6 +70,9 @@ Cloud-specific automation scripts and infrastructure as code to deploy the stack
   * `07-deploy-fastapi-ecs/`: AWS ECR and ECS deployment.
 * **`gcp/`**: Compute Engine, Cloud Storage, Artifact Registry, and Cloud Run scripts.
 * **`azure/`**: Virtual Machines, Blob Storage, ACR, and ACI scripts.
+
+### 3. `datasets/`
+Contains the raw CSV and TSV datasets required for the model training phase (e.g., IMDB reviews, Twitter sentiment data, disaster tweets).
 
 ---
 
