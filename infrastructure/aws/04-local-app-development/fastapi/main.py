@@ -7,22 +7,50 @@ from transformers import AutoImageProcessor
 
 from fastapi import FastAPI, Request, HTTPException
 from scripts.data_model import NLPDataInput, NLPDataOutput, ImageDataInput, ImageDataOutput
+from scripts import s3
 
 app = FastAPI()
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-####### Load ML Models Directly from 02-model-training ##########
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../02-model-training'))
+####### Model Loading Logic: Hybrid (Local Support + Cloud Fallback) ##########
 
-path_sentiment = os.path.join(MODELS_DIR, 'sentiment_classification/tinybert-sentiment-analysis')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Path to the training directory
+EXTERNAL_TRAINING_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../02-model-training'))
+# Path to local S3 cache
+LOCAL_S3_CACHE = os.path.join(BASE_DIR, 'ml-models')
+
+def get_model_path(model_subdir: str, model_name: str):
+    """
+    Checks for the model in the training directory first (local support).
+    If not found, falls back to downloading from S3 into a local cache (cloud support).
+    """
+    # 1. Check external training directory (Local)
+    local_training_path = os.path.join(EXTERNAL_TRAINING_DIR, model_subdir, model_name)
+    if os.path.isdir(local_training_path) and any(os.scandir(local_training_path)):
+        print(f"Loading {model_name} from Local Training Dir: {local_training_path}")
+        return local_training_path
+
+    # 2. Check local S3 cache or download (Cloud)
+    local_cache_path = os.path.join(LOCAL_S3_CACHE, model_name)
+    if not os.path.isdir(local_cache_path) or not any(os.scandir(local_cache_path)):
+        print(f"Model not found locally. Downloading {model_name} from S3...")
+        s3.download_dir(local_cache_path, model_name + '/')
+    
+    print(f"Loading {model_name} from S3 Cache: {local_cache_path}")
+    return local_cache_path
+
+# Load Sentiment Model
+path_sentiment = get_model_path('sentiment_classification', 'tinybert-sentiment-analysis')
 sentiment_model = pipeline('text-classification', model=path_sentiment, device=device)
 
-path_disaster = os.path.join(MODELS_DIR, 'disaster_tweets_classification/tinybert-disaster-tweet')
+# Load Disaster Model
+path_disaster = get_model_path('disaster_tweets_classification', 'tinybert-disaster-tweet')
 tweeter_model = pipeline('text-classification', model=path_disaster, device=device)
 
-path_pose = os.path.join(MODELS_DIR, 'human_pose_classification/vit-human-pose-classification')
+# Load Pose Model
+path_pose = get_model_path('human_pose_classification', 'vit-human-pose-classification')
 image_processor = AutoImageProcessor.from_pretrained(path_pose, use_fast=True, local_files_only=True)
 pose_model = pipeline('image-classification', model=path_pose, device=device, image_processor=image_processor)
 
@@ -30,7 +58,7 @@ pose_model = pipeline('image-classification', model=path_pose, device=device, im
 
 @app.get("/")
 def read_root():
-    return {"health":"200"}
+    return {"health":"200", "mode": "hybrid"}
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
@@ -78,7 +106,7 @@ async def get_twitter_sentiment_v2(request: Request):
         return {"ip": ip, "text": text, "sentiment": "normal", "user_id": user_id}
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid JSON format or bad request")
 
 # Real ML Endpoints

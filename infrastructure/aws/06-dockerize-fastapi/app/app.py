@@ -1,118 +1,112 @@
 import warnings
 warnings.filterwarnings('ignore')
 
-from scripts.data_model import NLPDataInput, NLPDataOutput, ImageDataInput, ImageDataOutput
-from scripts import s3
-
-from fastapi import FastAPI
-from fastapi import Request
-import uvicorn
 import os
 import time
 import socket
-
 import torch
 from transformers import pipeline
-from transformers import AutoImageProcessor #-> like Tokenizer
+from transformers import AutoImageProcessor
 
-# model_ckpt = "google/vit-base-patch16-224-in21k"
-# image_processor = AutoImageProcessor.from_pretrained(model_ckpt, use_fast=True)
+from scripts.data_model import NLPDataInput, NLPDataOutput, ImageDataInput, ImageDataOutput
+from scripts import s3
+
+from fastapi import FastAPI, Request, HTTPException
 
 app = FastAPI()
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-####### Download ML Models ##########
+####### Deploy Folder: Strictly Cloud (S3 Download Only) ##########
 
-force_download = False # False
+force_download = False 
 
-model_name = 'tinybert-sentiment-analysis/'
-local_path = 'ml-models/'+model_name
-if not os.path.isdir(local_path) or force_download:
-    s3.download_dir(local_path, model_name)
-sentiment_model = pipeline('text-classification', model=local_path, device=device)
+def check_and_download_model(model_name: str):
+    local_path = os.path.join('ml-models', model_name.rstrip('/'))
+    # In a containerized environment, we always check if models are present
+    if not os.path.isdir(local_path) or not os.listdir(local_path) or force_download:
+        print(f"Downloading {model_name} from S3 into {local_path}...")
+        s3.download_dir(local_path, model_name)
+    return local_path
 
+print("Initializing Production Server via S3...")
 
-model_name = 'tinybert-disaster-tweet/'
-local_path = 'ml-models/'+model_name
-if not os.path.isdir(local_path) or force_download:
-    s3.download_dir(local_path, model_name)
-tweeter_model = pipeline('text-classification', model=local_path, device=device)
+path_sentiment = check_and_download_model('tinybert-sentiment-analysis/')
+sentiment_model = pipeline('text-classification', model=path_sentiment, device=device)
 
+path_disaster = check_and_download_model('tinybert-disaster-tweet/')
+tweeter_model = pipeline('text-classification', model=path_disaster, device=device)
 
-model_name = 'vit-human-pose-classification/'
-local_path = 'ml-models/'+model_name
-if not os.path.isdir(local_path) or force_download:
-    s3.download_dir(local_path, model_name)
-
-# store image processor with the model
-image_processor = AutoImageProcessor.from_pretrained(local_path, use_fast=True, local_files_only=True)
-pose_model = pipeline('image-classification', model=local_path, device=device, image_processor=image_processor)
+path_pose = check_and_download_model('vit-human-pose-classification/')
+image_processor = AutoImageProcessor.from_pretrained(path_pose, use_fast=True, local_files_only=True)
+pose_model = pipeline('image-classification', model=path_pose, device=device, image_processor=image_processor)
 
 ######## Download ENDS  #############
 
-
 @app.get("/")
 def read_root():
-    return f"Hello Users: {socket.gethostname()}"
+    return {"health":"200", "hostname": socket.gethostname()}
 
-@app.post("/api/v1/sentiment_analysis")
+@app.post("/api/v1/sentiment_analysis", response_model=NLPDataOutput)
 def sentiment_analysis(data: NLPDataInput):
-    start = time.time()
-    output = sentiment_model(data.text)
-    end = time.time()
-    prediction_time = int((end-start)*1000)
+    try:
+        start = time.time()
+        output = sentiment_model(data.text)
+        end = time.time()
+        prediction_time = int((end-start)*1000)
 
-    labels = [x['label'] for x in output]
-    scores = [x['score'] for x in output]
+        labels = [x['label'] for x in output]
+        scores = [x['score'] for x in output]
 
-    output = NLPDataOutput(model_name="tinybert-sentiment-analysis",
-                           text = data.text,
-                           labels=labels,
-                           scores = scores,
-                           prediction_time=prediction_time)
+        return NLPDataOutput(
+            model_name="tinybert-sentiment-analysis",
+            text=data.text,
+            labels=labels,
+            scores=scores,
+            prediction_time=prediction_time
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    return output
-
-
-@app.post("/api/v1/disaster_classifier")
+@app.post("/api/v1/disaster_classifier", response_model=NLPDataOutput)
 def disaster_classifier(data: NLPDataInput):
-    start = time.time()
-    output = tweeter_model(data.text)
-    end = time.time()
-    prediction_time = int((end-start)*1000)
+    try:
+        start = time.time()
+        output = tweeter_model(data.text)
+        end = time.time()
+        prediction_time = int((end-start)*1000)
 
-    labels = [x['label'] for x in output]
-    scores = [x['score'] for x in output]
+        labels = [x['label'] for x in output]
+        scores = [x['score'] for x in output]
 
-    output = NLPDataOutput(model_name="tinybert-disaster-tweet",
-                           text = data.text,
-                           labels=labels,
-                           scores = scores,
-                           prediction_time=prediction_time)
+        return NLPDataOutput(
+            model_name="tinybert-disaster-tweet",
+            text=data.text,
+            labels=labels,
+            scores=scores,
+            prediction_time=prediction_time
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    return output
-
-
-@app.post("/api/v1/pose_classifier")
+@app.post("/api/v1/pose_classifier", response_model=ImageDataOutput)
 def pose_classifier(data: ImageDataInput):
-    start = time.time()
-    # print(data)
-    urls = [str(x) for x in data.url]
-    output = pose_model(urls)
-    end = time.time()
-    prediction_time = int((end-start)*1000)
+    try:
+        start = time.time()
+        urls = [str(x) for x in data.url]
+        output = pose_model(urls)
+        end = time.time()
+        prediction_time = int((end-start)*1000)
 
-    labels = [x[0]['label'] for x in output]
-    scores = [x[0]['score'] for x in output]
+        labels = [x[0]['label'] for x in output]
+        scores = [x[0]['score'] for x in output]
 
-    output = ImageDataOutput(model_name="vit-human-pose-classification",
-                           url = data.url,
-                           labels=labels,
-                           scores = scores,
-                           prediction_time=prediction_time)
-    
-    return output
-
-# if __name__=="__main__":
-#     uvicorn.run(app="app:app", port=8502, reload=True, host="0.0.0.0")
+        return ImageDataOutput(
+            model_name="vit-human-pose-classification",
+            url=data.url,
+            labels=labels,
+            scores=scores,
+            prediction_time=prediction_time
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
