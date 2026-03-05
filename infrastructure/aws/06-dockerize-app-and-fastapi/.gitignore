@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Ruff
+.ruff_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Security - Credentials & Secrets
+.env
+.env.local
+*.pem
+*.key
+*.crt
+credentials.json
+aws_credentials.json
+accessKeys.csv
+
+# Cloud credentials
+.aws/
+gcp_credentials.json
+azure_credentials.json
+service-account-key.json
+
+# Model cache (can be large)
+ml-models/
+*.h5
+*.pkl
+*.pt
+*.onnx
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
