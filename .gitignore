@@ -188,4 +188,6 @@ train_dir
 *trainer_state*
 *spiece.model*
 .aws
+omixec.pem
 GEMINI.md
+.DS_Store

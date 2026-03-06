@@ -12,7 +12,7 @@ As mentioned in the lecture, creating the role is a one-time process typically d
 2. Click **Roles** > **Create role**.
 3. Select **AWS service** as the trusted entity and **EC2** as the use case.
 4. Search for and check the policy: **`AmazonS3FullAccess`**.
-5. Name the role: `ec2-s3-full-access`.
+5. Name the role: `ec2-mlops-least-privilege`.
 6. Click **Create role**. 
    *Note: AWS automatically creates an "Instance Profile" with the same name.*
 
@@ -25,7 +25,7 @@ If you have an existing instance and want to give it S3 access quickly:
 1. Go to the **EC2 Dashboard** > **Instances**.
 2. Select your instance.
 3. Click **Actions** > **Security** > **Modify IAM role**.
-4. Select `ec2-s3-full-access` from the dropdown and click **Update IAM role**.
+4. Select `ec2-mlops-least-privilege` from the dropdown and click **Update IAM role**.
 
 ---
 
@@ -40,7 +40,7 @@ import boto3
 iam = boto3.client('iam')
 ec2 = boto3.client('ec2')
 
-role_name = "ec2-s3-full-access"
+role_name = "ec2-mlops-least-privilege"
 instance_id = "i-xxxxxxxxxxxx" # Your Instance ID from run_instances()
 
 # 1. Get the Role information
