@@ -1,51 +1,12 @@
-# Azure Infrastructure Requirements - Python 3.11.8 Compatible
-# ==============================================================
+# Azure Infrastructure Requirements
 
 # Core Azure SDK
-azure-identity>=1.15.0,<2.0.0
-azure-core>=1.30.0,<2.0.0
-
-# Compute
-azure-mgmt-compute>=30.0.0,<31.0.0
-azure-mgmt-containerinstance>=18.0.0,<19.0.0
-azure-mgmt-containerregistry>=10.1.0,<11.0.0
-azure-mgmt-containerservice>=30.0.0,<31.0.0
-azure-mgmt-kubernetes>=5.0.0,<6.0.0
+azure-identity
+azure-core
 
 # Storage
-azure-storage-blob>=12.19.0,<13.0.0
-azure-storage-file-datalake>=12.14.0,<13.0.0
-azure-storage-queue>=12.6.0,<13.0.0
-
-# Networking
-azure-mgmt-network>=21.0.0,<22.0.0
-
-# Resource Management
-azure-mgmt-resource>=23.0.0,<24.0.0
-azure-mgmt-keyvault>=5.0.0,<6.0.0
-azure-mgmt-cosmosdb>=8.0.0,<9.0.0
-
-# AI & ML Services
-azure-ai-ml>=1.13.0,<2.0.0
-azure-ai-generative>=1.0.0,<2.0.0
-
-# Security
-azure-keyvault-secrets>=4.7.0,<5.0.0
-azure-keyvault-keys>=4.7.0,<5.0.0
-azure-mgmt-security>=5.0.0,<6.0.0
-msal>=1.27.0,<2.0.0  # For Entra ID (Azure AD)
-
-# Functions
-azure-functions>=1.18.0,<2.0.0
-
-# Monitoring
-azure-mgmt-monitor>=5.0.0,<6.0.0
-azure-mgmt-loganalytics>=1.0.0,<2.0.0
-applicationinsights>=0.11.10,<1.0.0
-
-# CLI
-azure-cli>=2.61.0,<3.0.0
+azure-storage-blob
+azure-storage-queue
 
 # For testing
-azure-sdk-for-python>=0.0.1
-moto>=5.0.0,<6.0.0
+moto
