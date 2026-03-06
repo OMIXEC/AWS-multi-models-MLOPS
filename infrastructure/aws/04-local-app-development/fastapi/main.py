@@ -47,7 +47,7 @@ sentiment_model = pipeline('text-classification', model=path_sentiment, device=d
 
 # Load Disaster Model
 path_disaster = get_model_path('disaster_tweets_classification', 'tinybert-disaster-tweet')
-tweeter_model = pipeline('text-classification', model=path_disaster, device=device)
+social_media_model = pipeline('text-classification', model=path_disaster, device=device)
 
 # Load Pose Model
 path_pose = get_model_path('human_pose_classification', 'vit-human-pose-classification')
@@ -144,7 +144,7 @@ def disaster_classifier(data: NLPDataInput):
             raise HTTPException(status_code=400, detail="Input text list cannot be empty.")
 
         start = time.time()
-        output = tweeter_model(data.text)
+        output = social_media_model(data.text)
         end = time.time()
         prediction_time = int((end-start)*1000)
 

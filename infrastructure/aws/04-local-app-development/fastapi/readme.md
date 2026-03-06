@@ -17,13 +17,18 @@ python -m uvicorn main:app --reload  # On Windows
 
 - **Change Port**:
   ```bash
-  uvicorn main:app --reload --port 8000
+  uvicorn main:app --reload --port 8000 # Or custom port like 8502
   ```
 
 - **Change Host**:
   ```bash
-  uvicorn main:app --reload --host 0.0.0.0 --port 8000
+  uvicorn main:app --reload --host 0.0.0.0 --port 8000 
   ```
+# Running our streamlit frontend application
+```bash
+
+streamlit run frontend.py
+```
 
 # What is a Route in FastAPI?
 

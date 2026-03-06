@@ -36,7 +36,7 @@ model_name = 'tinybert-disaster-tweet/'
 local_path = 'mlops-multi-models/ml-models/'+model_name
 if not os.path.isdir(local_path) or force_download:
     s3.download_dir(local_path, model_name)
-tweeter_model = pipeline('text-classification', model=local_path, device=device)
+social_media_model = pipeline('text-classification', model=local_path, device=device)
 
 
 model_name = 'vit-human-pose-classification/'
@@ -45,12 +45,12 @@ if not os.path.isdir(local_path) or force_download:
     s3.download_dir(local_path, model_name)
 pose_model = pipeline('image-classification', model=local_path, device=device, image_processor=image_processor)
 
-######## Download ENDS  #############
+
 
 
 @app.get("/")
 def read_root():
-    return "Hello! I am up and running!"
+    return "Health"
 
 @app.post("/api/v1/sentiment_analysis")
 def sentiment_analysis(data: NLPDataInput):
@@ -74,7 +74,7 @@ def sentiment_analysis(data: NLPDataInput):
 @app.post("/api/v1/disaster_classifier")
 def disaster_classifier(data: NLPDataInput):
     start = time.time()
-    output = tweeter_model(data.text)
+    output = social_media_model(data.text)
     end = time.time()
     prediction_time = int((end-start)*1000)
 
