@@ -11,3 +11,8 @@ azure-storage-queue>=12.6.0
 
 # For testing
 moto>=5.0.0
+
+# Load dotenv
+
+python-dotenv>=1.2.2
+

@@ -1,5 +1,8 @@
 import os
+from dotenv import load_dotenv
 from google.cloud import storage
+
+load_dotenv()
 
 BUCKET_NAME = os.environ.get("GCS_BUCKET_NAME", "your-bucket-name")
 
