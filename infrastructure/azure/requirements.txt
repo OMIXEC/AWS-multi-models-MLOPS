@@ -1,12 +1,13 @@
 # Azure Infrastructure Requirements
 
 # Core Azure SDK
-azure-identity
-azure-core
+azure-identity>=1.15.0
+azure-core>=1.30.0
+azure-mgmt-resource>=23.0.0
 
 # Storage
-azure-storage-blob
-azure-storage-queue
+azure-storage-blob>=12.19.0
+azure-storage-queue>=12.6.0
 
 # For testing
-moto
+moto>=5.0.0

@@ -1,61 +1,11 @@
-# GCP Infrastructure Requirements - Python 3.11.8 Compatible
-# ===========================================================
+# GCP Infrastructure Requirements
 
 # Core GCP Libraries
-google-cloud>=0.34.0,<1.0.0
-google-cloud-core>=2.4.0,<3.0.0
+google-cloud
+google-cloud-core
 
 # Storage
-google-cloud-storage>=2.14.0,<3.0.0
-
-# Compute Engine
-google-cloud-compute>=1.14.0,<2.0.0
-
-# Container Registry & Artifact Registry
-google-cloud-container>=2.21.0,<3.0.0
-google-cloud-artifact-registry>=1.10.0,<2.0.0
-
-# Cloud Run
-google-cloud-run>=0.10.0,<1.0.0
-
-# AI Platform
-google-cloud-aiplatform>=1.41.0,<2.0.0
-google-cloud-automl>=2.14.0,<3.0.0
-
-# Vertex AI
-google-cloud-vertexai>=1.0.0,<2.0.0
-
-# Logging & Monitoring
-google-cloud-logging>=3.10.0,<4.0.0
-google-cloud-monitoring>=2.22.0,<3.0.0
-google-cloud-profiler>=1.11.0,<2.0.0
-
-# Secret Manager
-google-cloud-secret-manager>=2.20.0,<3.0.0
-
-# IAM
-google-cloud-iam>=1.16.0,<2.0.0
-
-# BigQuery
-google-cloud-bigquery>=3.19.0,<4.0.0
-
-# Firestore
-google-cloud-firestore>=2.15.0,<3.0.0
-
-# Kubernetes
-google-cloud-container-engine>=1.17.0,<2.0.0
-
-# Cloud Functions
-google-cloud-functions>=2.4.0,<3.0.0
-
-# Workflows
-google-cloud-workflows>=1.11.0,<2.0.0
-
-# Cloud Build
-google-cloud-build>=1.18.0,<2.0.0
-
-# Cloud Scheduler
-google-cloud-scheduler>=1.11.0,<2.0.0
+google-cloud-storage
 
 # For testing
-moto>=5.0.0,<6.0.0
+moto
