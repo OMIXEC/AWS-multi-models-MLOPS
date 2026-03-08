@@ -1,3 +1,5 @@
+> **Note:** This folder is the original Artifact Registry and Cloud Run setup. The canonical version with full SDK documentation and least-privilege IAM is now at `07-deploy-cloud-run/`.
+
 # Deploy ML App Docker with GCP Artifact Registry and Cloud Run
 
 ## 1. Tag and Push Docker Image to Google Artifact Registry (GAR)

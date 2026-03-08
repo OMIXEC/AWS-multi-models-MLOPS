@@ -1,3 +1,5 @@
+> **Note:** This folder is the original ACR/ACI setup. The canonical version with full SDK documentation and least-privilege RBAC is now at `07-deploy-azure-container-apps/`.
+
 # Deploy ML App Docker with Azure Container Registry (ACR) and Azure Container Instances (ACI)
 
 ## 1. Push Docker Image to Azure Container Registry (ACR)

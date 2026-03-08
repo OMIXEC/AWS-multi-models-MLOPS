@@ -1,18 +1,20 @@
-# Azure Infrastructure Requirements
+# Azure Infrastructure Requirements — Python 3.11.8
 
-# Core Azure SDK
-azure-identity>=1.15.0
-azure-core>=1.30.0
-azure-mgmt-resource>=23.0.0
-azure-mgmt-storage>=24.0.0
-# Storage
-azure-storage-blob>=12.19.0
-azure-storage-queue>=12.6.0
+# Authentication
+azure-identity>=1.15.0,<2.0.0
+azure-core>=1.30.0,<2.0.0
 
-# For testing
-moto>=5.0.0
+# Management SDKs
+azure-mgmt-resource>=23.0.0,<24.0.0
+azure-mgmt-storage>=24.0.0,<25.0.0
+azure-mgmt-compute>=30.0.0,<31.0.0
+azure-mgmt-network>=25.0.0,<26.0.0
+azure-mgmt-authorization>=4.0.0,<5.0.0
+azure-mgmt-containerregistry>=10.0.0,<11.0.0
+azure-mgmt-containerinstance>=10.0.0,<11.0.0
 
-# Load dotenv
+# Storage Data Plane
+azure-storage-blob>=12.19.0,<13.0.0
 
-python-dotenv>=1.2.2
-
+# Utilities
+python-dotenv>=1.0.0,<2.0.0

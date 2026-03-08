@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - ":5000"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/gcloud/service-account-key.json
+      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
+    volumes:
+      # Mount GCP service account key for GCS access
+      # Place your key at ~/.gcloud/service-account-key.json
+      - ~/.gcloud:/gcloud:ro
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    depends_on:
+      - app
+    ports:
+      - "80:80"
